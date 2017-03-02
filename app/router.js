@@ -2,5 +2,6 @@
 
 module.exports = app => {
   app.get('/', 'home.index');
-  app.get('/today', 'today.news');
+  app.get('/today', 'today.rencentNews');
+  app.get('/today/special', 'today.specialNews');
 };

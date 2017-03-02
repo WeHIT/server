@@ -4,34 +4,103 @@
 
 const iconv = require('iconv-lite');
 const cheerio = require('cheerio');
+const util = require('../util/index');
+
 
 module.exports = app => {
   class TodayService extends app.Service {
-    * news(command) {
+
+    /**
+     * 根据 command 爬取相关分类文章，暴露给 controller
+     * @param command
+     * @returns {*}
+     */
+    * rencentNews(command) {
+      return yield this.getRencentNews(command)
+    }
+
+    /**
+     * 根据 url 爬取特定 url 的相关信息，暴露给 controller
+     * @param url
+     * @returns {*}
+     */
+    * specialNews(url) {
+      return yield this.getSpecialNews(url);
+    }
+
+
+    /**
+     * 根据 command 爬取相关分类文章
+     * @param command
+     */
+    * getRencentNews(command) {
       switch (command.type) {
         case 'searchTag':
-          const { todayUrl, todaySize } = this.app.config;
 
-          const spiderCtx = yield this.ctx.curl(`${todayUrl}/depart/3.htm`);
+          const { todayUrl } = this.app.config;
+
+          const spiderCtx = yield this.ctx.curl(`${todayUrl}/depart/${this.app.config.todayMap[command.text]}.htm`);
 
           const decodeCtx = iconv.decode(spiderCtx.data, 'gb2312');
 
-          const ctxArray = [];
           let $ = cheerio.load(decodeCtx);
-          $('#right #left #main #content ul li').each(function() {
-            ctxArray.push({
-              title: $(this).text(),
-            })
-          })
 
-          console.log(ctxArray)
-          return 1;
+          const ctxArray = [];
+
+          $("#right #left #main #content ul li").each(function() {
+            let targetNode = $(this).children();
+            ctxArray.push({
+              title: targetNode.text(),
+              href: todayUrl + targetNode.attr('href')
+            })
+          });
+
+          for(let i = 0, l = ctxArray.length; i < l; i++) {
+
+            ctxArray[i].firstSrc = (yield this.getSpecialNews(ctxArray[i].href)).firstImg;
+            console.log(ctxArray[i])
+          }
+
+          return JSON.stringify(ctxArray);
           break;
         default:
           break;
       }
     }
+
+    /**
+     * 获取 today 上特定 URL 的内容，第一张图片
+     * @param url
+     * @returns {{firstImg: string, content: jQuery}}
+     */
+    * getSpecialNews(url) {
+      const { todayUrl, todayNewsFirstImageDefaultArr } = this.app.config;
+
+      const spiderCtx = yield this.ctx.curl(url);
+      const decodeCtx = iconv.decode(spiderCtx.data, 'gb2312');
+
+      let $ = cheerio.load(decodeCtx);
+
+      // 随机抽取图片
+      let firstImg = util.randomFirstImgSrc(todayNewsFirstImageDefaultArr);
+
+      $('#text img').each(function(index) {
+        const originSrc = $(this).attr('src');
+        $(this).attr('src', todayUrl + originSrc);
+
+        if(index === 0) {
+          firstImg = todayUrl + originSrc;
+        }
+      });
+
+      return {
+        firstImg: firstImg,
+        content: $("#text").html(),
+      }
+    }
+
   }
+
   return TodayService;
 
 };
