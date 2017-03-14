@@ -1,8 +1,9 @@
 'use strict';
 
 module.exports = app => {
-  app.get('/', 'home.index');
-  app.get('/today', 'today.rencentNews');
-  app.get('/today/special', 'today.specialNews');
-  app.get('/weather/todayWeather', 'weather.todayWeather');
+  app.resources('home', '/', 'home');
+  app.resources('todayRecent', '/today-recent', 'todayRecent');
+  app.resources('todaySpecial', '/today-special', 'todaySpecial');
+  app.resources('weather', '/weather', 'weather');
+
 };

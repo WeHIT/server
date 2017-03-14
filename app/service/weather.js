@@ -8,7 +8,10 @@ module.exports = app => {
       return yield this.getTodayWeather(command);
     }
 
-    * getTodayWeather(command = {location: 'haerbin'}) {
+    * getTodayWeather(command) {
+      if (!command || !command.location) {
+        command.location = 'haerbin';
+      }
       const { weatherUrl, weatherKey, weatherErrorTips } = this.app.config;
 
       let weatherCtx = yield this.ctx.curl(`${weatherUrl}`, {

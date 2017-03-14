@@ -4,11 +4,11 @@
 'use strict';
 
 module.exports = app => {
-  class TodayController extends app.Controller {
-    * rencentNews() {
+  class TodayRecentController extends app.Controller {
+    * index() {
       const newsList = yield this.ctx.service.today.rencentNews({
         type: 'searchTag',
-        text: 'MANAGEMENT'
+        text: 'MANAGEMENT',
       });
 
       this.ctx.body = newsList;
@@ -20,5 +20,5 @@ module.exports = app => {
       this.ctx.body = news.content;
     }
   }
-  return TodayController;
+  return TodayRecentController;
 };
