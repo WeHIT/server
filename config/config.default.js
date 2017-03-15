@@ -31,7 +31,7 @@ module.exports = appInfo => {
     // middleware
     middleware: [
       'robot',
-      'gzip',
+      //'gzip',
     ],
 
     // detail for middleware

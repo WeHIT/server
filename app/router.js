@@ -5,5 +5,4 @@ module.exports = app => {
   app.resources('todayRecent', '/today-recent', 'todayRecent');
   app.resources('todaySpecial', '/today-special', 'todaySpecial');
   app.resources('weather', '/weather', 'weather');
-
 };

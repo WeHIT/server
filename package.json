@@ -5,10 +5,11 @@
   "private": true,
   "dependencies": {
     "cheerio": "^0.22.0",
-    "egg": "^0.9.0",
+    "egg": "^1.0.0-rc.3",
     "iconv-lite": "^0.4.15",
     "koa-is-json": "^1.0.0",
     "moment": "^2.17.1",
+    "true-html-escape": "^1.0.0",
     "zlib": "^1.0.5"
   },
   "devDependencies": {

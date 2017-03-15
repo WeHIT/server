@@ -1,7 +1,7 @@
 /**
  * Created by rccoder on 02/03/2017.
  */
-
+'use strict';
 module.exports = (options, app) => {
   return function* robotMiddleware(next) {
     const userAgent = this.get('user-agent') || '';
@@ -12,5 +12,5 @@ module.exports = (options, app) => {
     } else {
       yield next;
     }
-  }
+  };
 };

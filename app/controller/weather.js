@@ -5,8 +5,9 @@
 module.exports = app => {
   class WeatherController extends app.Controller {
     * index() {
-      const weather = yield this.ctx.service.weather.todayWeather({ location: this.ctx.query.location });
-      this.ctx.body = weather;
+      const { ctx, service } = this;
+      const weather = yield service.weather.todayWeather({ location: this.ctx.query.location });
+      ctx.body = weather;
     }
   }
   return WeatherController;

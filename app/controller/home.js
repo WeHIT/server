@@ -3,7 +3,7 @@
 module.exports = app => {
   class HomeController extends app.Controller {
     * index() {
-      this.ctx.body = 'Hi, new Egg.js';
+      this.success('Hi, new Egg.js');
     }
   }
   return HomeController;

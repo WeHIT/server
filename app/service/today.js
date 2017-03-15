@@ -1,11 +1,11 @@
 /**
  * Created by rccoder on 01/03/2017.
  */
-
+'use strict';
 const iconv = require('iconv-lite');
 const cheerio = require('cheerio');
+const escaper = require('true-html-escape');
 const util = require('../util/index');
-
 
 module.exports = app => {
   class TodayService extends app.Service {
@@ -13,10 +13,10 @@ module.exports = app => {
     /**
      * 根据 command 爬取相关分类文章，暴露给 controller
      * @param command
-     * @returns {*}
+     * @return {*}
      */
     * rencentNews(command) {
-      return yield this.getRencentNews(command)
+      return yield this.getRencentNews(command);
     }
 
     /**
@@ -35,36 +35,36 @@ module.exports = app => {
      */
     * getRencentNews(command) {
       switch (command.type) {
-        case 'searchTag':
-
+        case 'searchTag': {
           const { todayUrl } = this.app.config;
 
           const spiderCtx = yield this.ctx.curl(`${todayUrl}/depart/${this.app.config.todayMap[command.text]}.htm`);
 
           const decodeCtx = iconv.decode(spiderCtx.data, 'gb2312');
 
-          let $ = cheerio.load(decodeCtx);
+          const $ = cheerio.load(decodeCtx);
 
           const ctxArray = [];
 
-          $("#right #left #main #content ul li").each(function() {
-            let targetNode = $(this).children();
+          $('#right #left #main #content ul li').each(function() {
+            const targetNode = $(this).children();
             ctxArray.push({
               title: targetNode.text(),
-              href: todayUrl + targetNode.attr('href')
-            })
+              href: todayUrl + targetNode.attr('href'),
+            });
           });
 
-          for(let i = 0, l = ctxArray.length; i < l; i++) {
+          for (let i = 0, l = ctxArray.length; i < l; i++) {
 
             ctxArray[i].firstSrc = (yield this.getSpecialNews(ctxArray[i].href)).firstImg;
-            console.log(ctxArray[i])
+            console.log(ctxArray[i]);
           }
 
-          return JSON.stringify(ctxArray);
+          return ctxArray;
+        }
+        default: {
           break;
-        default:
-          break;
+        }
       }
     }
 
@@ -79,7 +79,7 @@ module.exports = app => {
       const spiderCtx = yield this.ctx.curl(url);
       const decodeCtx = iconv.decode(spiderCtx.data, 'gb2312');
 
-      let $ = cheerio.load(decodeCtx);
+      const $ = cheerio.load(decodeCtx);
 
       // 随机抽取图片
       let firstImg = util.randomFirstImgSrc(todayNewsFirstImageDefaultArr);
@@ -88,15 +88,15 @@ module.exports = app => {
         const originSrc = $(this).attr('src');
         $(this).attr('src', todayUrl + originSrc);
 
-        if(index === 0) {
+        if (index === 0) {
           firstImg = todayUrl + originSrc;
         }
       });
 
       return {
-        firstImg: firstImg,
-        content: $("#text").html(),
-      }
+        firstImg,
+        content: escaper.unescape($('#text').html()),
+      };
     }
 
   }

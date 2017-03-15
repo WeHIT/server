@@ -6,9 +6,10 @@
 module.exports = app => {
   class TodaySpecialController extends app.Controller {
     * index() {
-      const news = yield this.ctx.service.today.specialNews('http://today.hit.edu.cn/news/2017/03-02/1641020130RL0.htm');
+      const { ctx, service } = this;
+      const news = yield service.today.specialNews('http://today.hit.edu.cn/news/2017/03-02/1641020130RL0.htm');
 
-      this.ctx.body = news.content;
+      this.success(news);
     }
   }
   return TodaySpecialController;

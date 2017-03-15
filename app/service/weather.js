@@ -9,27 +9,24 @@ module.exports = app => {
     }
 
     * getTodayWeather(command) {
-      if (!command || !command.location) {
-        command.location = 'haerbin';
-      }
       const { weatherUrl, weatherKey, weatherErrorTips } = this.app.config;
 
       let weatherCtx = yield this.ctx.curl(`${weatherUrl}`, {
         data: {
           key: weatherKey,
-          location: command.location,
+          location: command.location || 'haerbin',
           language: 'zh-Hans',
-          unit: 'c'
+          unit: 'c',
         },
         dataType: 'json',
       });
 
-      if(weatherCtx.status === 200) {
+      if (weatherCtx.status === 200) {
         weatherCtx = weatherCtx.data.results;
       } else {
         weatherCtx = weatherErrorTips;
       }
-      return JSON.stringify(weatherCtx)
+      return weatherCtx;
     }
   }
 
