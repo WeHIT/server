@@ -10,7 +10,7 @@ module.exports = () => {
     },
     // task 是真正定时任务执行时被运行的函数，第一个参数是一个匿名的 Context 实例
     * task(ctx) {
-      const res = yield ctx.curl('http://www.baidu.com', {
+      const res = yield ctx.curl('https://registry.npm.taobao.org/egg/latest', {
         dataType: 'json',
       });
       console.log(res);
