@@ -11,6 +11,7 @@ module.exports = app => {
         type: 'searchTag',
         text: 'MANAGEMENT',
       });
+      console.log(ctx.session.username)
       this.success(newsList);
     }
   }

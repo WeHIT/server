@@ -41,7 +41,16 @@ module.exports = appInfo => {
       ],
     },
     gzip: {
-      threshold: 1024
-    }
+      threshold: 10240,
+    },
+    bodyParser: {
+      jsonLimit: '8m',
+      formLimit: '8m',
+    },
+    multipart: {
+      fileExtensions: [
+
+      ],
+    },
   };
 };
