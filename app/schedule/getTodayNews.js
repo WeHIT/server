@@ -10,10 +10,32 @@ module.exports = () => {
     },
     // task 是真正定时任务执行时被运行的函数，第一个参数是一个匿名的 Context 实例
     * task(ctx) {
-      const res = yield ctx.curl('https://registry.npm.taobao.org/egg/latest', {
-        dataType: 'json',
+      const newsList = yield ctx.service.today.rencentNews({
+        type: 'searchTag',
+        text: 'MANAGEMENT',
       });
-      console.log(res);
+
+
+      for (let i = 0; i < newsList.length; i++) {
+        const findTodayNews = yield ctx.model.todayNews.find({
+          title: newsList[i].title,
+          href: newsList[i].href,
+          tag: 'MANAGEMENT',
+        });
+
+        if (!findTodayNews || findTodayNews.length <= 0) {
+          const todayNews = new ctx.model.todayNews({
+            title: newsList[i].title,
+            href: newsList[i].href,
+            firstImg: newsList[i].firstSrc,
+            content: '',
+            data: '',
+            tag: 'MANAGEMENT',
+          });
+          yield todayNews.save();
+        }
+      }
+
     },
   };
 };
