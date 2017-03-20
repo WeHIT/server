@@ -5,6 +5,7 @@ module.exports = appInfo => {
   return {
     // should change to your own
     keys: appInfo.name + '123456',
+    secret: '123456',
 
     // 今日哈工大地址
     todayUrl: 'http://today.hit.edu.cn',
