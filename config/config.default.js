@@ -45,8 +45,8 @@ module.exports = appInfo => {
       threshold: 10240,
     },
     bodyParser: {
-      jsonLimit: '8m',
-      formLimit: '8m',
+      jsonLimit: '8mb',
+      formLimit: '8mb',
     },
     multipart: {
       fileExtensions: [
@@ -56,6 +56,11 @@ module.exports = appInfo => {
     mongoose: {
       url: 'mongodb://127.0.0.1/WeHIT',
       options: {},
+    },
+    security: {
+      csrf: {
+        ignoreJSON: true, // 默认为 false，当设置为 true 时，将会放过所有 content-type 为 `application/json` 的请求
+      },
     },
   };
 };
