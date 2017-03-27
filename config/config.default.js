@@ -29,6 +29,15 @@ module.exports = appInfo => {
     weatherKey: 'vzjfy7yvepyzv0ay',
     weatherErrorTips: '亲！天气查询接口好像疯了~',
 
+    foodCard: {
+      site: 'http://172.31.7.16',
+      homeLogin: '/homeLogin.action',
+      checkpicCode: '/getCheckpic.action?rand=4015.2017842046916',
+      loginStudent: '/loginstudent.action',
+      accountcardUser: '/accountcardUser.action',
+      accounttodatTrjnObject: '/accounttodatTrjnObject.action',
+    },
+
     // middleware
     middleware: [
       'robot',
