@@ -8,9 +8,10 @@ module.exports = app => {
   class FoodCardService extends app.Service {
 
     /**
-     * 获得用户数据，暴露给 C
-     * @param {*} username 
-     * @param {*} password 
+     * @desc 获得用户数据，暴露给 C
+     * @param {string} username 学号
+     * @param {string} password 密码
+     * @return {object} 用户信息（包含 cookies）
      */
     * getUserInfo(username, password) {
       const cookies = yield this.getOriginCookie();
@@ -21,17 +22,20 @@ module.exports = app => {
     }
 
     /**
-     * 
-     * @param {*} cookies 
+     * @desc 获取用户消费情况，暴露给 C
+     * @param {string} cookies cookies
      * @param {*} accountId 银行卡后 5 位
+     * @return {Array} [costToday, history{time, location, cost}]
      */
     * getCostToday(cookies, accountId) {
       const costToday = yield this.fetchCostToday(cookies, accountId);
       console.log(costToday);
       return costToday;
     }
+
     /**
-     * 获取第一次登陆的 cookies
+     * @desc 获取第一次登陆的 cookies，用于图片验证
+     * @return {string} cookies
      */
     * getOriginCookie() {
       const { foodCard } = this.app.config;
@@ -42,25 +46,26 @@ module.exports = app => {
     }
 
     /**
-     * 强行指定验证码
-     * @param {*} cookies 
+     * @desc 强行指定验证码
+     * @param {string} cookies cookies
+     * @return {boolean} 请求成功
      */
     * putCheckpicCode(cookies) {
       const { foodCard } = this.app.config;
-      const checkpicCode = yield this.ctx.curl(`${foodCard.site}${foodCard.checkpicCode}`, {
+      yield this.ctx.curl(`${foodCard.site}${foodCard.checkpicCode}`, {
         headers: {
           Cookie: cookies,
         },
       });
-      return checkpicCode;
+      return true;
     }
 
     /**
-     * 登录，验证验证码
-     * @param {*} cookies 
-     * @param {*} code 
-     * @param {*} username 
-     * @param {*} passowrd 
+     * @desc 登录，验证验证码
+     * @param {string} cookies cookies
+     * @param {string} code 验证码
+     * @param {string} username 用户名
+     * @param {string} passowrd  密码
      */
     * loginStudent(cookies, code, username, passowrd) {
       const { foodCard } = this.app.config;
@@ -80,8 +85,9 @@ module.exports = app => {
     }
 
     /**
-     * 获取用户信息
-     * @param {*} cookies 
+     * @desc 获取用户信息
+     * @param {string} cookies cookies
+     * @return {object} 用户信息
      */
     * fetchUserInfo(cookies) {
       const { foodCard } = this.app.config;
@@ -93,7 +99,7 @@ module.exports = app => {
       });
 
       const decodeCtx = iconv.decode(data.data, 'utf8');
-      //console.log(decodeCtx);
+      // console.log(decodeCtx);
 
       const $ = cheerio.load(decodeCtx);
       const name = $('.neiwen div')[1].children[0].data;
@@ -113,9 +119,10 @@ module.exports = app => {
     }
 
     /**
-     * 获取今日消费数据
-     * @param {*} cookies 
-     * @param {*} accountId 
+     * @desc 获取今日消费数据
+     * @param {string} cookies cookies
+     * @param {string} accountId 银行卡后 5 位
+     * @return {array} 消费数据
      */
     * fetchCostToday(cookies, accountId) {
       const { foodCard } = this.app.config;
@@ -158,21 +165,20 @@ module.exports = app => {
     }
 
     /**
-     * cherrio 取数据封装
-     * @param {*} item 
+     * @desc cherrio 取数据封装
+     * @param {Node} item cherrio 得到的 Node
+     * @return {object} 转为对象输出
      */
     getConRecord(item) {
       const time = item.children[1].children[0].data.trim();
       const location = item.children[9].children[0].data.trim();
       const cost = item.children[13].children[0].data.trim();
-      
       return {
         time,
         location,
         cost,
       };
     }
-
   }
   return FoodCardService;
 };
