@@ -30,12 +30,13 @@ module.exports = appInfo => {
     weatherErrorTips: '亲！天气查询接口好像疯了~',
 
     foodCard: {
-      site: 'http://172.31.7.16',
-      homeLogin: '/homeLogin.action',
-      checkpicCode: '/getCheckpic.action?rand=4015.2017842046916',
-      loginStudent: '/loginstudent.action',
-      accountcardUser: '/accountcardUser.action',
-      accounttodatTrjnObject: '/accounttodatTrjnObject.action',
+      site: 'http://172.31.7.16', // base
+      homeLogin: '/homeLogin.action', // 首页
+      checkpicCode: '/getCheckpic.action?rand=4015.2017842046916', // 验证码地址
+      loginStudent: '/loginstudent.action', // 登录地址
+      accountcardUser: '/accountcardUser.action', // 获取用户信息
+      accounttodatTrjnObject: '/accounttodatTrjnObject.action', // 查询当日
+      accounthisTrjn: '/accounthisTrjn.action', // 历史查询
     },
 
     // middleware
