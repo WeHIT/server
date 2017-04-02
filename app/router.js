@@ -9,4 +9,5 @@ module.exports = app => {
   app.resources('todaySpecial', '/today-special', 'todaySpecial');
   app.resources('weather', '/weather', 'weather');
   app.resources('foodCard', '/food-card', 'foodCard');
+  app.resources('express', '/express', 'express');
 };

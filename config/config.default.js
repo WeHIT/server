@@ -39,6 +39,12 @@ module.exports = appInfo => {
       accounthisTrjn: '/accounthisTrjn.action', // 历史查询
     },
 
+    expressAPI: {
+      identification: 'http://api.kdniao.cc/Ebusiness/EbusinessOrderHandle.aspx',
+      EBusinessID: '1283169',
+      key: 'd348067b-7165-4725-8526-8fd230648daf',
+    },
+
     // middleware
     middleware: [
       'robot',
