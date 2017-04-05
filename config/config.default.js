@@ -13,8 +13,22 @@ module.exports = appInfo => {
     todaySize: 3,
     // 今日哈工大爬虫地址 MAP
     todayMap: {
-      // 管理学院
-      MANAGEMENT: 3,
+      som: {
+        id: 3,
+        name: '管理学院',
+      },
+      cs: {
+        id: 14,
+        name: '计算机科学与技术学院',
+      },
+      sa: {
+        id: 53,
+        name: '航天学院',
+      },
+      fls: {
+        id: 48,
+        name: '外国语学院',
+      },
     },
     // 今日哈工大特定新闻打底缩略图
     todayNewsFirstImageDefaultArr: [

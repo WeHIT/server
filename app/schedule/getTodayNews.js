@@ -10,29 +10,32 @@ module.exports = () => {
     },
     // task 是真正定时任务执行时被运行的函数，第一个参数是一个匿名的 Context 实例
     * task(ctx) {
-      const newsList = yield ctx.service.today.rencentNews({
-        type: 'searchTag',
-        text: 'MANAGEMENT',
-      });
+      const { todayMap } = ctx.app.config;
 
-
-      for (let i = 0; i < newsList.length; i++) {
-        const findTodayNews = yield ctx.model.todayNews.find({
-          title: newsList[i].title,
-          href: newsList[i].href,
-          tag: 'MANAGEMENT',
+      for (const prop in todayMap) {
+        console.log('===========')
+        const newsList = yield ctx.service.today.rencentNews({
+          type: 'searchTag',
+          text: todayMap[prop],
         });
-
-        if (!findTodayNews || findTodayNews.length <= 0) {
-          const todayNews = new ctx.model.todayNews({
+        for (let i = 0; i < newsList.length; i++) {
+          const findTodayNews = yield ctx.model.todayNews.find({
             title: newsList[i].title,
             href: newsList[i].href,
-            firstImg: newsList[i].firstSrc,
-            content: '',
-            data: '',
-            tag: 'MANAGEMENT',
+            tag: prop,
           });
-          yield todayNews.save();
+
+          if (!findTodayNews || findTodayNews.length <= 0) {
+            const todayNews = new ctx.model.todayNews({
+              title: newsList[i].title,
+              href: newsList[i].href,
+              firstImg: newsList[i].firstSrc,
+              content: '',
+              data: '',
+              tag: prop,
+            });
+            yield todayNews.save();
+          }
         }
       }
 

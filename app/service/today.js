@@ -38,7 +38,7 @@ module.exports = app => {
         case 'searchTag': {
           const { todayUrl } = this.app.config;
 
-          const spiderCtx = yield this.ctx.curl(`${todayUrl}/depart/${this.app.config.todayMap[command.text]}.htm`);
+          const spiderCtx = yield this.ctx.curl(`${todayUrl}/depart/${command.text.id}.htm`);
 
           const decodeCtx = iconv.decode(spiderCtx.data, 'gb2312');
 
@@ -57,7 +57,6 @@ module.exports = app => {
           for (let i = 0, l = ctxArray.length; i < l; i++) {
 
             ctxArray[i].firstSrc = (yield this.getSpecialNews(ctxArray[i].href)).firstImg;
-            console.log(ctxArray[i]);
           }
 
           return ctxArray;

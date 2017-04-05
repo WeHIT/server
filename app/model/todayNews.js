@@ -7,7 +7,7 @@ module.exports = mongoose => {
     firstImg: { type: String },
     content: { type: String },
     data: { type: String },
-    tag: { type: String },
+    tag: { type: String }, // 官网前缀
   });
 
   return mongoose.model('todayNews', todayNewsSchema);
