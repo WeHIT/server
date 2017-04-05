@@ -5,10 +5,10 @@ module.exports = app => {
     get user() {
       return this.ctx.session.user;
     }
-    success(data) {
+    success(msg) {
       this.ctx.body = {
-        success: true,
-        data,
+        code: 200,
+        msg,
       };
     }
     notFound(msg) {

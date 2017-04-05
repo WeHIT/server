@@ -10,8 +10,15 @@ const util = require('../util/index');
 module.exports = app => {
   class TodayService extends app.Service {
 
+    * getRecentNewFromDb(tag, limit = 4) {
+      const findExpress = yield this.ctx.model.todayNews.find({
+        tag,
+      }, null, { sort: { _id: -1 } }).limit(limit);
+      return findExpress;
+    }
+
     /**
-     * 根据 command 爬取相关分类文章，暴露给 controller
+     * 根据 command 爬取相关分类文章，暴露给 schedule
      * @param command
      * @return {*}
      */

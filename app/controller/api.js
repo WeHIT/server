@@ -18,6 +18,14 @@
     "data": "查快递"
   }
 }
+
+// 获取新闻
+{
+  "command": "common",
+  "options": {
+    "data": "获取新闻"
+  }
+}
  */
 
 module.exports = app => {
@@ -45,7 +53,26 @@ module.exports = app => {
               }
             }
             this.success({
-              data,
+              nextCommand: 'common',
+              data: [{
+                type: 'express',
+                data: {
+                  position: 'left',
+                  content: data,
+                },
+              }],
+            });
+          } else if (data === '获取新闻') {
+            const news = yield this.service.today.getRecentNewFromDb('cs');
+            this.success({
+              nextCommand: 'common',
+              data: [{
+                type: 'news',
+                data: {
+                  position: 'left',
+                  content: news,
+                },
+              }],
             });
           }
           return;
@@ -54,6 +81,20 @@ module.exports = app => {
           const { data } = options;
           const expressInfo = yield this.service.express.getInfo('' + data, this.ctx.state.user.username);
           this.ctx.body = expressInfo;
+          return;
+        }
+        case 'news': {
+          const news = yield this.service.today.getRecentNewFromDb('cs');
+          this.success({
+            nextCommand: 'common',
+            data: [{
+              type: 'news',
+              data: {
+                position: 'left',
+                content: news,
+              },
+            }],
+          });
           return;
         }
         default: {
