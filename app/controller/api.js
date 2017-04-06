@@ -53,7 +53,7 @@ module.exports = app => {
                 };
               }),
             };
-            
+      
             this.success({
               nextCommand: 'common',
               data: [{
@@ -75,6 +75,11 @@ module.exports = app => {
                   content: news,
                 },
               }],
+            });
+          } else if (data === '查空教室') {
+            const data = yield this.service.emptySchool.curlEmptySchool();
+            this.success({
+              data,
             });
           }
           return;
