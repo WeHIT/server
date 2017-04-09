@@ -1,5 +1,7 @@
 'use strict';
 
+const md5 = require('md5');
+
 module.exports = app => {
   class LoginController extends app.Controller {
     * index() {
@@ -14,7 +16,7 @@ module.exports = app => {
 
       const findUser = yield this.ctx.model.user.find({
         id,
-        password,
+        password: md5(password),
       });
 
       if (findUser.length <= 0) {

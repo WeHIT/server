@@ -1,5 +1,7 @@
 'use strict';
 
+const md5 = require('md5');
+
 module.exports = app => {
   class RegController extends app.Controller {
     * index() {
@@ -21,7 +23,7 @@ module.exports = app => {
       if (findUser.length <= 0) {
         const newUser = new this.ctx.model.user({
           id,
-          password,
+          password: md5(password),
           college,
           idCard,
         });

@@ -40,7 +40,8 @@ module.exports = app => {
         case 'common': {
           const { data } = options;
           if (data === '查快递' || data === '快递' || data === '查询快递') {
-            const result = yield this.service.express.getHistoryInfo(this.ctx.state.user.username);
+            console.log(this.ctx.state.user);
+            const result = yield this.service.express.getHistoryInfo(this.ctx.state.user.id);
 
             const data = {
               len: result.length,
@@ -53,7 +54,7 @@ module.exports = app => {
                 };
               }),
             };
-      
+
             this.success({
               nextCommand: 'common',
               data: [{
@@ -65,7 +66,14 @@ module.exports = app => {
               }],
             });
           } else if (data === '获取新闻') {
-            const news = yield this.service.today.getRecentNewFromDb('cs');
+
+            console.log(this.ctx.state.user);
+            const findUser = yield this.ctx.model.user.find({
+              id: this.ctx.state.user.id,
+            });
+            console.log(findUser[0]);
+            
+            const news = yield this.service.today.getRecentNewFromDb(findUser[0].college);
             this.success({
               nextCommand: 'common',
               data: [{
