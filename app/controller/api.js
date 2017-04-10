@@ -115,6 +115,17 @@ module.exports = app => {
             this.success({
               data,
             });
+          } else {
+            this.success({
+              nextCommand: 'common',
+              data: [{
+                type: 'normalDialog',
+                data: {
+                  position: 'left',
+                  content: '抱歉，我不是太懂你在说什么',
+                },
+              }],
+            });
           }
           return;
         }
