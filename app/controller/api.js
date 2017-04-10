@@ -40,8 +40,12 @@ module.exports = app => {
         case 'common': {
           const { data } = options;
           if (data === '查快递' || data === '快递' || data === '查询快递') {
-            console.log(this.ctx.state.user);
-            const result = yield this.service.express.getHistoryInfo(this.ctx.state.user.id);
+            const id = this.ctx.state.user.id;
+            console.log(`查询id${id}`);
+            // 获取历史快递信息
+            const result = yield this.service.express.getHistoryInfo(id);
+            // // 获取用户信息
+            const userInfo = yield this.service.user.getUserInfo(id);
 
             const data = {
               len: result.length,
@@ -55,16 +59,38 @@ module.exports = app => {
               }),
             };
 
-            this.success({
-              nextCommand: 'common',
-              data: [{
-                type: 'express',
-                data: {
-                  position: 'left',
-                  content: data,
-                },
-              }],
-            });
+            console.log(userInfo)
+
+            // 没有登录
+            if (userInfo == null || userInfo.length <= 0) {
+              this.success({
+                nextCommand: 'express',
+                data: [{
+                  type: 'normalDialog',
+                  data: {
+                    position: 'left',
+                    content: 'Hi，你还没有登录，无法保存你的历史查询记录。<br/>如果你要查询新快递，请直接输入快递号码后点击发送',
+                  },
+                }],
+              });
+            } else {
+              this.success({
+                nextCommand: 'express',
+                data: [{
+                  type: 'express',
+                  data: {
+                    position: 'left',
+                    content: data,
+                  },
+                }, {
+                  type: 'normalDialog',
+                  data: {
+                    position: 'left',
+                    content: 'Hi，如果你要查询新快递，请直接输入快递号码后点击发送',
+                  },
+                }],
+              });
+            }
           } else if (data === '获取新闻') {
 
             console.log(this.ctx.state.user);
@@ -72,7 +98,7 @@ module.exports = app => {
               id: this.ctx.state.user.id,
             });
             console.log(findUser[0]);
-            
+
             const news = yield this.service.today.getRecentNewFromDb(findUser[0].college);
             this.success({
               nextCommand: 'common',
@@ -94,8 +120,24 @@ module.exports = app => {
         }
         case 'express': {
           const { data } = options;
-          const expressInfo = yield this.service.express.getInfo('' + data, this.ctx.state.user.username);
-          this.ctx.body = expressInfo;
+          const expressInfo = yield this.service.express.getInfo('' + data, this.ctx.state.user.id);
+          this.success({
+            nextCommand: 'common',
+            data: [{
+              type: 'express',
+              data: {
+                position: 'left',
+                content: {
+                  data: [{
+                    status: '在途中',
+                    logisticCode: expressInfo.logisticCode,
+                    shipperName: expressInfo.content[0].shipperName,
+                    traces: expressInfo.content[0].Traces,
+                  }],
+                },
+              },
+            }],
+          });
           return;
         }
         case 'news': {

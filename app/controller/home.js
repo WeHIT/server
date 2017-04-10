@@ -9,7 +9,7 @@ module.exports = app => {
       console.log(this.ctx.state);
       //this.success(findTodayNews);
       // console.log(44444444444)
-      const token = app.jwt.sign({ username: 1130310128 }, app.config.jwt.secret);
+      const token = app.jwt.sign({ username: 'shabi' }, app.config.jwt.secret);
       console.log(token)
       // console.log(app.jwt)
       this.ctx.body = '123';
