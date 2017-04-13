@@ -38,7 +38,7 @@ module.exports = app => {
 
       switch (command) {
         case 'common': {
-          const { data } = options;
+          const { data, location } = options;
           if (data === '查快递' || data === '快递' || data === '查询快递') {
             const id = this.ctx.state.user.id;
             console.log(`查询id${id}`);
@@ -114,6 +114,43 @@ module.exports = app => {
             const data = yield this.service.emptySchool.curlEmptySchool();
             this.success({
               data,
+            });
+          } else if (data === '获取天气') {
+            const cityInfo = yield this.service.weather.getCityByLatAndLon(location.lat, location.lon);
+            // 预报天气
+            //const data = yield this.service.weather.getTodayWeatherForecasts(cityInfo.adcode);
+            const data = yield this.service.weather.getTodayWeather(cityInfo.adcode);
+            console.log(data);
+            
+            let str = '';
+            str += `你好, 你的位置是  ${cityInfo.formatted_address}<br/>`;
+            // str += `${data.reporttime} 起为你预测最近四天天气<br/>`;
+
+            // data.casts.map(item => {
+            //   str += `日期: ${item.date}  `;
+            //   str += `星期${item.week}<br/>`;
+            //   str += `白天天气情况: ${item.dayweather}  温度: ${item.daytemp}  风力: ${item.daypower}<br/>`;
+            //   str += `夜间天气情况: ${item.nightweather} 温度: ${item.nighttemp}  风力: ${item.nightpower}<br/><br/>`;
+            //   return 1;
+            // });
+
+            str += `天气数据发布时间: ${data.reporttime}<br/>`;
+
+            str += `天气情况: ${data.weather}<br/>`;
+            str += `温度: ${data.temperature}<br/>`;
+            str += `风向: ${data.winddirection}<br/>`;
+            str += `风力: ${data.windpower + 3}<br/>`;
+            str += `湿度: ${data.humidity}<br/>`;
+
+            this.success({
+              nextCommand: 'common',
+              data: [{
+                type: 'normalDialog',
+                data: {
+                  position: 'left',
+                  content: str,
+                },
+              }],
             });
           } else {
             this.success({

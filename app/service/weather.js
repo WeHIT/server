@@ -8,25 +8,74 @@ module.exports = app => {
       return yield this.getTodayWeather(command);
     }
 
-    * getTodayWeather(command) {
-      const { weatherUrl, weatherKey, weatherErrorTips } = this.app.config;
+    /**
+     * 地理位置编码
+     * @param {string} lat 纬度
+     * @param {string} lon 经度
+     */
+    * getCityByLatAndLon(lat, lon) {
+      const { aMap } = this.app.config;
 
-      let weatherCtx = yield this.ctx.curl(`${weatherUrl}`, {
+      const _lat = lat.toFixed(5);
+      const _lon = lon.toFixed(5);
+      const data = yield this.ctx.curl(`${aMap.geoCodeUrl}`, {
         data: {
-          key: weatherKey,
-          location: command.location || 'haerbin',
-          language: 'zh-Hans',
-          unit: 'c',
+          key: aMap.key,
+          location: `${_lon},${_lat}`,
         },
         dataType: 'json',
       });
 
-      if (weatherCtx.status === 200) {
-        weatherCtx = weatherCtx.data.results;
+      if (data.data.status == 1) {
+        return {
+          formatted_address: data.data.regeocode.formatted_address,
+          cityCode: data.data.regeocode.addressComponent.citycode,
+          city: data.data.regeocode.addressComponent.city,
+          adcode: data.data.regeocode.addressComponent.adcode,
+        }
       } else {
-        weatherCtx = weatherErrorTips;
+        return 0
       }
-      return weatherCtx;
+    }
+
+    /**
+     * @desc 天气预报预测
+     * @param {*} adcode 
+     */
+    * getTodayWeatherForecasts(adcode = 230103) {
+      console.log(adcode)
+      const { aMap } = this.app.config;
+      const data = yield this.ctx.curl(`${aMap.weatherUrl}`, {
+        data: {
+          key: aMap.key,
+          city: adcode,
+          extensions: 'all',
+        },
+        dataType: 'json',
+      });
+      if(data.data.infocode == 10000) {
+        return data.data.forecasts[0]
+      }
+    }
+
+    /**
+     * @desc 今日详情
+     * @param {*} adcode 
+     */
+    * getTodayWeather(adcode = 230103) {
+      console.log(adcode)
+      const { aMap } = this.app.config;
+      const data = yield this.ctx.curl(`${aMap.weatherUrl}`, {
+        data: {
+          key: aMap.key,
+          city: adcode,
+          extensions: 'base',
+        },
+        dataType: 'json',
+      });
+      if(data.data.infocode == 10000) {
+        return data.data.lives[0];
+      }
     }
   }
 

@@ -69,6 +69,12 @@ module.exports = appInfo => {
       },
     },
 
+    aMap: {
+      key: '0fadccdaab645f1dcd61715f6d19812e',
+      geoCodeUrl: 'http://restapi.amap.com/v3/geocode/regeo',
+      weatherUrl: 'http://restapi.amap.com/v3/weather/weatherInfo',
+    },
+
     // middleware
     middleware: [
       'robot',
