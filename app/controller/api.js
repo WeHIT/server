@@ -72,6 +72,10 @@ module.exports = app => {
                     content: 'Hi，你还没有登录，无法保存你的历史查询记录。<br/>如果你要查询新快递，请直接输入快递号码后点击发送',
                   },
                 }],
+                tipBar: [{
+                  actionText: '测试',
+                  descText: '测试描述',
+                }],
               });
             } else {
               this.success({
