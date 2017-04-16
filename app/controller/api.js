@@ -36,6 +36,8 @@ module.exports = app => {
         options,
       } = this.ctx.request.body;
 
+      console.log(this.ctx.request.body);
+
       const id = this.ctx.state.user.id;
       console.log(`用户id: ${id}`);
 
@@ -194,16 +196,19 @@ module.exports = app => {
             position: 'left',
             content: str,
           },
-          tipBar: [{
-            actionText: '明天天气',
-            descText: '预测一下明天的天气',
-          }, {
-            actionText: '后天天气',
-            descText: '预测一下后天天气',
-          }, {
-            actionText: '大后天天气',
-            descText: '预测一下后天天气',
-          }],
+        }],
+        tipBar: [{
+          actionText: '明天天气',
+          descText: '预测一下明天的天气',
+        }, {
+          actionText: '后天天气',
+          descText: '预测一下后天天气',
+        }, {
+          actionText: '大后天天气',
+          descText: '预测一下后天天气',
+        }, {
+          actionText: '最近4天天气',
+          descText: '预测一下最近 4 天的所有天气',
         }],
       };
     }

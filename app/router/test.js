@@ -2,7 +2,7 @@
 
 module.exports = app => {
   // app.resources('home', '/', 'home');
-  app.get('/', 'home.index');
+  app.post('/', 'home.index');
   app.resources('login', '/login', 'login');
   app.resources('reg', '/reg', 'reg');
   app.resources('todayRecent', '/today-recent', 'todayRecent');

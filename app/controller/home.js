@@ -12,7 +12,10 @@ module.exports = app => {
       const token = app.jwt.sign({ username: 'shabi' }, app.config.jwt.secret);
       console.log(token)
       // console.log(app.jwt)
-      this.ctx.body = '123';
+      //this.ctx.body = '123';
+      this.success({
+        a: 1,
+      })
     }
   }
   return HomeController;
