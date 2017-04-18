@@ -1,5 +1,6 @@
 'use strict';
-
+const moment = require('moment');
+const util = require('../util');
 /**
 
 // 指定单号的快递
@@ -65,6 +66,15 @@ module.exports = app => {
           this.success(result);
         } else if (data === '获取天气') {
           const result = yield this.handleWeatherCommon(location);
+          this.success(result);
+        } else if (data === '明天天气' || data === '后天天气' || data === '大后天天气' || data === '最近4天天气') {
+          const result = yield this.handleWeatherSpecial(location, data);
+          this.success(result);
+        } else if (data === '查饭卡') {
+          const result = yield this.handleFoodCardCommon(id);
+          this.success(result);
+        } else if (data === '今天具体消费情况' || data === '最近三天消费情况' || data === '最近一周消费情况' || data === '最近一月消费情况') {
+          const result = yield this.handleFoodCardSpecial(id, data);
           this.success(result);
         } else {
           const result = yield this.handleOtherCommon();
@@ -248,19 +258,28 @@ module.exports = app => {
      * @return {object} 预测天气信息
      */
     * handleWeatherSpecial(location, day) {
+
+      const indexMap = {
+        明天天气: 1,
+        后天天气: 2,
+        大后天天气: 3,
+        最近4天天气: 4,
+      };
+
       const cityInfo = yield this.service.weather.getCityByLatAndLon(location.lat, location.lon);
       // 预报天气
       const data = yield this.service.weather.getTodayWeatherForecasts(cityInfo.adcode);
 
       let str = '';
-      str += `你好, 你的位置是  ${cityInfo.formatted_address}<br/>`;
-      str += `${data.reporttime} 起为你预测最近四天天气<br/>`;
+      str += `${data.reporttime} 起为你预测 ${day}<br/>`;
 
-      data.casts.map(item => {
-        str += `日期: ${item.date}  `;
-        str += `星期${item.week}<br/>`;
-        str += `白天天气情况: ${item.dayweather}  温度: ${item.daytemp}  风力: ${item.daypower}<br/>`;
-        str += `夜间天气情况: ${item.nightweather} 温度: ${item.nighttemp}  风力: ${item.nightpower}<br/><br/>`;
+      data.casts.map((item, index) => {
+        if (indexMap[day] === index || indexMap[day] === 4) {
+          str += `日期: ${item.date}  `;
+          str += `星期${item.week}<br/>`;
+          str += `白天天气情况: ${item.dayweather}  温度: ${item.daytemp}  风力: ${item.daypower}<br/>`;
+          str += `夜间天气情况: ${item.nightweather} 温度: ${item.nighttemp}  风力: ${item.nightpower}<br/><br/>`;
+        }
         return 1;
       });
 
@@ -300,24 +319,37 @@ module.exports = app => {
      * @return {object} 特定快递信息
      */
     * handleExpressSpecial(data, id) {
-      const expressInfo = yield this.service.express.getInfo('' + data, id);
-      return {
-        nextCommand: 'common',
-        data: [{
-          type: 'express',
-          data: {
-            position: 'left',
-            content: {
-              data: [{
-                status: '在途中',
-                logisticCode: expressInfo.logisticCode,
-                shipperName: expressInfo.content[0].shipperName,
-                traces: expressInfo.content[0].Traces,
-              }],
+      try {
+        const expressInfo = yield this.service.express.getInfo('' + data, id);
+        return {
+          nextCommand: 'common',
+          data: [{
+            type: 'express',
+            data: {
+              position: 'left',
+              content: {
+                data: [{
+                  status: '在途中',
+                  logisticCode: expressInfo.logisticCode,
+                  shipperName: expressInfo.content[0].shipperName,
+                  traces: expressInfo.content[0].Traces,
+                }],
+              },
             },
-          },
-        }],
-      };
+          }],
+        };
+      } catch (e) {
+        return {
+          nextCommand: 'express',
+          data: [{
+            type: 'normalDialog',
+            data: {
+              position: 'left',
+              data: '无法查询的到此快递，请重新输入',
+            },
+          }],
+        };
+      }
     }
 
     /**
@@ -336,6 +368,132 @@ module.exports = app => {
           },
         }],
       };
+    }
+
+    /**
+     * @desc 获取饭卡介绍信息
+     * @param {string} id 用户 id
+     * @return {object} 返回对象
+     */
+    * handleFoodCardCommon(id) {
+      try {
+        let str = '';
+        const userInfo = yield this.service.user.getUserInfo(id);
+
+        console.log(userInfo);
+        // 饭卡密码（身份证后 5 位）
+        const idCard = userInfo.idCard;
+        const userInfoInFood = yield this.service.foodCard.getUserInfo(id, idCard);
+        const costToday = yield this.service.foodCard.getCostToday(userInfoInFood.cookies, userInfoInFood.accountId);
+        str = `你的饭卡尾号为: ${userInfoInFood.accountId}。 今天共消费￥ ${costToday.costToday}`;
+
+        return {
+          nextCommand: 'common',
+          data: [{
+            type: 'normalDialog',
+            data: {
+              position: 'left',
+              content: str,
+            },
+          }],
+          tipBar: [{
+            actionText: '今天具体消费情况',
+            descText: '我要查询今天具体消费情况',
+          }, {
+            actionText: '最近三天消费情况',
+            descText: '我要查询最近三天消费情况',
+          }, {
+            actionText: '最近一周消费情况',
+            descText: '我要查询最近一周消费情况',
+          }, {
+            actionText: '最近一月消费情况',
+            descText: '我要查询最近一月消费情况         ',
+          }],
+        };
+      } catch (e) {
+        return {
+          nextCommand: 'common',
+          data: [{
+            type: 'normalDialog',
+            data: {
+              position: 'left',
+              content: '没有这个饭卡信息，请检查下你的密码是否设置正确或已经登录',
+            },
+          }],
+        };
+      }
+    }
+
+    /**
+     * @desc 获取特定消费情况
+     * @param {string} id 学号
+     * @param {string} data 数据（今天具体消费情况）
+     * @return {object} 返回的数据
+     */
+    * handleFoodCardSpecial(id, data) {
+      try {
+        let str = '';
+        const userInfo = yield this.service.user.getUserInfo(id);
+
+        console.log(userInfo);
+        // 饭卡密码（身份证后 5 位）
+        const idCard = userInfo.idCard;
+        // 获取银行卡号，cookies 等信息
+        const userInfoInFood = yield this.service.foodCard.getUserInfo(id, idCard);
+
+        if (data === '今天具体消费情况') {
+          const costToday = yield this.service.foodCard.getCostToday(userInfoInFood.cookies, userInfoInFood.accountId);
+          str += `你今天共消费: ${costToday.costToday}<br/>`;
+          console.log(costToday);
+          costToday.history && costToday.history.length && costToday.history.map(item => {
+            str += `时间: ${item.time}  地点: ${item.location} 消费金额: ${item.cost}<br/>`;
+            return 1;
+          });
+        } else {
+
+          const foodDuringMap = {
+            最近三天消费情况: 3,
+            最近一周消费情况: 7,
+            最近一月消费情况: 30,
+          };
+          const returnMap = {
+            最近三天消费情况: '最近三天你共消费',
+            最近一周消费情况: '最近一周你共消费',
+            最近一月消费情况: '最近一月你共消费',
+          };
+          const start = util.getDateBefore(-foodDuringMap[data]);
+          const end = util.getDateBefore(0);
+
+          const costDuring = yield this.service.foodCard.getCostDuring(start, end, userInfoInFood.cookies, userInfoInFood.accountId);
+          str += `${returnMap[data]}: ￥ ${costDuring.costDuring}<br/>`;
+          costDuring.history && costDuring.history.length && costDuring.history.map(item => {
+            str += `时间: ${item.time}  地点: ${item.location} 消费金额: ${item.cost}<br/>`;
+            return 1;
+          });
+        }
+
+        return {
+          nextCommand: 'common',
+          data: [{
+            type: 'normalDialog',
+            data: {
+              position: 'left',
+              content: str,
+            },
+          }],
+        };
+      } catch (e) {
+        return {
+          nextCommand: 'common',
+          data: [{
+            type: 'normalDialog',
+            data: {
+              position: 'left',
+              content: '没有这个饭卡信息，请检查下你的密码是否设置正确或已经登录',
+            },
+          }],
+        };
+      }
     }
   }
   return ApiController;
