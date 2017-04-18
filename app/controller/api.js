@@ -28,6 +28,17 @@
 }
  */
 
+const ERROR_TIP = {
+  nextCommand: 'common',
+  data: [{
+    type: 'normalDialog',
+    data: {
+      position: 'left',
+      content: '额，出了点问题，截图发邮件到 rccoder.net@gmail 协助解决问题',
+    },
+  }],
+};
+
 module.exports = app => {
   class ApiController extends app.Controller {
     * index() {
@@ -141,22 +152,26 @@ module.exports = app => {
      * @return {object} 新闻信息
      */
     * handleTodayNewsCommon(id) {
-      const findUser = yield this.ctx.model.user.find({
-        id,
-      });
-      console.log(findUser[0]);
+      try {
+        const findUser = yield this.ctx.model.user.find({
+          id,
+        });
+        console.log(findUser[0]);
 
-      const news = yield this.service.today.getRecentNewFromDb(findUser[0].college);
-      return {
-        nextCommand: 'common',
-        data: [{
-          type: 'news',
-          data: {
-            position: 'left',
-            content: news,
-          },
-        }],
-      };
+        const news = yield this.service.today.getRecentNewFromDb(findUser[0].college);
+        return {
+          nextCommand: 'common',
+          data: [{
+            type: 'news',
+            data: {
+              position: 'left',
+              content: news,
+            },
+          }],
+        };
+      } catch (e) {
+        return ERROR_TIP;
+      }
     }
 
     /**
@@ -174,43 +189,56 @@ module.exports = app => {
      * @return {object} 天气信息
      */
     * handleWeatherCommon(location) {
-      const cityInfo = yield this.service.weather.getCityByLatAndLon(location.lat, location.lon);
-      const data = yield this.service.weather.getTodayWeather(cityInfo.adcode);
+      try {
+        const cityInfo = yield this.service.weather.getCityByLatAndLon(location.lat, location.lon);
+        const data = yield this.service.weather.getTodayWeather(cityInfo.adcode);
 
-      let str = '';
-      str += `你好, 你的位置是  ${cityInfo.formatted_address}<br/>`;
+        let str = '';
+        str += `你好, 你的位置是  ${cityInfo.formatted_address}<br/>`;
 
-      str += `天气数据发布时间: ${data.reporttime}<br/>`;
+        str += `天气数据发布时间: ${data.reporttime}<br/>`;
 
-      str += `天气情况: ${data.weather}<br/>`;
-      str += `温度: ${data.temperature}<br/>`;
-      str += `风向: ${data.winddirection}<br/>`;
-      str += `风力: ${data.windpower + 3}<br/>`;
-      str += `湿度: ${data.humidity}<br/>`;
+        str += `天气情况: ${data.weather}<br/>`;
+        str += `温度: ${data.temperature}<br/>`;
+        str += `风向: ${data.winddirection}<br/>`;
+        str += `风力: ${data.windpower + 3}<br/>`;
+        str += `湿度: ${data.humidity}<br/>`;
 
-      return {
-        nextCommand: 'common',
-        data: [{
-          type: 'normalDialog',
-          data: {
-            position: 'left',
-            content: str,
-          },
-        }],
-        tipBar: [{
-          actionText: '明天天气',
-          descText: '预测一下明天的天气',
-        }, {
-          actionText: '后天天气',
-          descText: '预测一下后天天气',
-        }, {
-          actionText: '大后天天气',
-          descText: '预测一下后天天气',
-        }, {
-          actionText: '最近4天天气',
-          descText: '预测一下最近 4 天的所有天气',
-        }],
-      };
+        return {
+          nextCommand: 'common',
+          data: [{
+            type: 'normalDialog',
+            data: {
+              position: 'left',
+              content: str,
+            },
+          }],
+          tipBar: [{
+            actionText: '明天天气',
+            descText: '预测一下明天的天气',
+          }, {
+            actionText: '后天天气',
+            descText: '预测一下后天天气',
+          }, {
+            actionText: '大后天天气',
+            descText: '预测一下后天天气',
+          }, {
+            actionText: '最近4天天气',
+            descText: '预测一下最近 4 天的所有天气',
+          }],
+        };
+      } catch (e) {
+        return {
+          nextCommand: 'common',
+          data: [{
+            type: 'normalDialog',
+            data: {
+              position: 'left',
+              content: '你出境了？无法定位你的位置',
+            },
+          }],
+        };
+      }
     }
 
     /**
