@@ -10,10 +10,11 @@ const util = require('../util/index');
 module.exports = app => {
   class TodayService extends app.Service {
 
+    // time 时间倒序
     * getRecentNewFromDb(tag, limit = 4) {
       const findExpress = yield this.ctx.model.todayNews.find({
         tag,
-      }, null, { sort: { _id: -1 } }).limit(limit);
+      }, null, { sort: { time: -1 } }).limit(limit);
       return findExpress;
     }
 
@@ -63,7 +64,10 @@ module.exports = app => {
 
           for (let i = 0, l = ctxArray.length; i < l; i++) {
 
-            ctxArray[i].firstSrc = (yield this.getSpecialNews(ctxArray[i].href)).firstImg;
+            const specialNews = yield this.getSpecialNews(ctxArray[i].href);
+            ctxArray[i].firstSrc = specialNews.firstImg;
+            ctxArray[i].content = specialNews.content;
+            ctxArray[i].time = specialNews.time;
           }
 
           return ctxArray;
@@ -99,9 +103,14 @@ module.exports = app => {
         }
       });
 
+      // 正则匹配时间
+      const dataReg = /\d{4}(\-)\d{1,2}(\-)\d{1,2}(\s+)\d{1,2}:\d{1,2}:\d{1,2}/;
+      const time = escaper.unescape($('#date').html()).match(dataReg) ? new Date(escaper.unescape($('#date').html()).match(dataReg)[0]).getTime() : 'not time';
+
       return {
         firstImg,
         content: escaper.unescape($('#text').html()),
+        time,
       };
     }
 

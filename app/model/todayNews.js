@@ -8,6 +8,7 @@ module.exports = mongoose => {
     content: { type: String },
     data: { type: String },
     tag: { type: String }, // 官网前缀
+    time: { type: String }, // 抓取时间
   });
 
   return mongoose.model('todayNews', todayNewsSchema);

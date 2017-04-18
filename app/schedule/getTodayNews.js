@@ -30,7 +30,8 @@ module.exports = () => {
               title: newsList[i].title,
               href: newsList[i].href,
               firstImg: newsList[i].firstSrc,
-              content: '',
+              content: newsList[i].content,
+              time: newsList[i].time,
               data: '',
               tag: prop,
             });
