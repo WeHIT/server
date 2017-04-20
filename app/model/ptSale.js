@@ -8,7 +8,7 @@ module.exports = mongoose => {
     firstImg: { type: String }, // 图片
     comment: { type: Array }, // 评论
     topicid: { type: String }, // 主题 id
-    locked: { type: String }, // "locked" 已购 "lockednew" 已售
+    locked: { type: String }, // "locked" 已购 "lockednew" 已售 | locked notLocked
   });
   return mongoose.model('ptSale', ptSaleSchema);
 };

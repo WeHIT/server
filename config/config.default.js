@@ -80,6 +80,7 @@ module.exports = appInfo => {
       saleSite: 'http://pt.hit.edu.cn/forums.php?action=viewforum&forumid=46',
       topicSite: 'http://pt.hit.edu.cn/forums.php?action=viewtopic&forumid=46',
       cookies: 'c_secure_uid=NDUxMzg%3D; c_secure_pass=f430d5af82573dceb6cc87e9280581cf; c_secure_ssl=bm9wZQ%3D%3D; c_secure_tracker_ssl=bm9wZQ%3D%3D; c_secure_login=bm9wZQ%3D%3D; QSESSION=df718ee610d11cf44e2d6be5fe99abb6%2FldxGsYvQ1PMpZJ2Zl0MjuB83.nSGoerY7U5sMfy7O.LICUNvRa4q; QPTUID=45138; UM_distinctid=15ac18eb74baff-05ba1cdf67c7e-1c3e6b52-1fa400-15ac18eb74c40f; ptbrowser=yes; _ga=GA1.3.322021877.1478674671; _gat=1',
+      defaultImg: '//okujk9avg.bkt.clouddn.com/20170420149269309041988.png',
     },
 
     // middleware

@@ -25,8 +25,12 @@ module.exports = app => {
      * @param {list} pureSaleInfoList 纯的二手交易信息
      */
     * saveToDb() {
+
+      const { pt } = this.app.config;
+
       const pureSaleInfoList = yield this.getPtSalePostList();
       const imgReg = /\[img].*\[\/img]/;
+
       for (let i = 0; i < pureSaleInfoList.length; i++) {
         const comment = yield this.getComment(pureSaleInfoList[i].topicid);
         yield this.ctx.model.ptSale.findOneAndUpdate({
@@ -34,15 +38,41 @@ module.exports = app => {
         }, {
           added: new Date(pureSaleInfoList[i].added).getTime(),
           subject: pureSaleInfoList[i].subject,
-          firstImg: comment[0].body.match(imgReg) ? comment[0].body.match(imgReg)[0].slice(5, -6) : '',
+          firstImg: comment[0].body.match(imgReg) ? comment[0].body.match(imgReg)[0].slice(5, -6) : pt.defaultImg,
           comment,
           topicid: pureSaleInfoList[i].topicid,
-          locked: pureSaleInfoList[i].img, // "locked" 已购 "lockednew" 已售
+          locked: pureSaleInfoList[i].img === 'locked' || pureSaleInfoList[i].img === 'locked' ? 'locked' : 'notLocked', // "locked" 已购 "lockednew" 已售
         }, {
           upsert: true,
           new: true,
         });
       }
+    }
+
+    /**
+     * @desc 从数据库获取最新二手
+     * @param {string} 数量
+     * @param {string} 类型 {所有的还是没有成交的}
+     * @return {Array} 查询到的对象
+     */
+    * getPostFromDB(limit = 4, type = 'undone') {
+      let post;
+      if (type === 'undone') {
+        post = yield this.ctx.model.ptSale.find({
+          locked: 'notLocked',
+        }, null, {
+          sort: {
+            added: -1,
+          },
+        }).limit(limit);
+      } else {
+        post = yield this.ctx.model.ptSale.find({}, null, {
+          sort: {
+            added: -1,
+          },
+        }).limit(limit);
+      }
+      return post;
     }
 
     /**
@@ -119,7 +149,7 @@ module.exports = app => {
           for (let i = 0; i < commentObj.forumsInfo.length; i++) {
             commentList.push({
               added: (commentObj.forumsInfo[i].added).match(timeReg)[0],
-              body: commentObj.forumsInfo[i].body.replace(/\/large/, '//pt.hit.edu.cn/large/'), // pt 曾经使用重定向
+              body: commentObj.forumsInfo[i].body.replace(/]\/large\//g, ']//pt.hit.edu.cn/large/'), // pt 曾经使用重定向
               posterid: commentObj.forumsInfo[i].posterid,
               username: '[PT]: ' + commentObj.posters[commentObj.forumsInfo[i].posterid].username,
               avatar: pt.site + '/' + commentObj.posters[commentObj.forumsInfo[i].posterid].avatar,
@@ -130,10 +160,6 @@ module.exports = app => {
           throw new Error('PT Sales Get Comment err: ' + e);
         }
       }
-    }
-
-    * handleImgSrc(body) {
-
     }
   }
   return PtSaleService;

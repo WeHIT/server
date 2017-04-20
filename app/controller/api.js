@@ -84,6 +84,9 @@ module.exports = app => {
         } else if (emptySchool.liveMap[data]) {
           const result = yield this.handleEmptySchoolCommonStepOne(data);
           this.success(result);
+        } else if (data === '淘二手') {
+          const result = yield this.handlePtSaleCommon();
+          this.success(result);
         } else {
           const result = yield this.handleOtherCommon();
           this.success(result);
@@ -554,6 +557,27 @@ module.exports = app => {
           },
         }],
         tipBar: liveTipBar,
+      };
+    }
+
+    * handlePtSaleCommon() {
+      const data = yield this.ctx.service.ptSale.getPostFromDB();
+      // return data;
+
+      return {
+        nextCommand: 'common',
+        data: [{
+          type: 'news',
+          data: {
+            position: 'left',
+            content: data.map(item => {
+              return {
+                firstImg: 'http:' + item.firstImg,
+                title: item.subject,
+              };
+            }),
+          },
+        }],
       };
     }
   }
