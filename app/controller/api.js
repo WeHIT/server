@@ -53,6 +53,8 @@ module.exports = app => {
       const id = this.ctx.state.user.id;
       console.log(`用户id: ${id}`);
 
+      const { emptySchool } = this.app.config;
+
       if (command === 'common') {
         const { data, location } = options;
         if (data === '查快递' || data === '快递' || data === '查询快递') {
@@ -75,6 +77,12 @@ module.exports = app => {
           this.success(result);
         } else if (data === '今天具体消费情况' || data === '最近三天消费情况' || data === '最近一周消费情况' || data === '最近一月消费情况') {
           const result = yield this.handleFoodCardSpecial(id, data);
+          this.success(result);
+        } else if (data === '查空教室') {
+          const result = yield this.handleEmptySchoolCommon();
+          this.success(result);
+        } else if (emptySchool.liveMap[data]) {
+          const result = yield this.handleEmptySchoolCommonStepOne(data);
           this.success(result);
         } else {
           const result = yield this.handleOtherCommon();
@@ -188,7 +196,7 @@ module.exports = app => {
      * @desc common type 查询空教室
      * @return {object} 空教室信息
      */
-    * handleEmptySchoolCommon() {
+    * handleEmptySchoolCommonStep1() {
       const data = yield this.service.emptySchool.curlEmptySchool();
       return data;
     }
@@ -494,6 +502,59 @@ module.exports = app => {
           }],
         };
       }
+    }
+
+    /**
+     * @desc 查空教室第一步
+     * @return {object} 返回对象
+     */
+    * handleEmptySchoolCommon() {
+      const { emptySchool } = this.app.config;
+
+      const liveTipBar = [];
+      for (const item in emptySchool.liveMap) {
+        console.log(item);
+        liveTipBar.push({
+          actionText: item,
+          descText: item,
+        });
+      }
+      return {
+        nextCommand: 'common',
+        data: [{
+          type: 'normalDialog',
+          data: {
+            position: 'left',
+            content: '请选择楼宇',
+          },
+        }],
+        tipBar: liveTipBar,
+      };
+    }
+
+    * handleEmptySchoolCommonStepOne(data) {
+      const { emptySchool } = this.app.config;
+
+      const liveTipBar = [];
+      for (const item in emptySchool.liveMap[data]) {
+        console.log(item);
+        liveTipBar.push({
+          actionText: item,
+          descText: item,
+        });
+      }
+
+      return {
+        nextCommand: 'common',
+        data: [{
+          type: 'normalDialog',
+          data: {
+            position: 'left',
+            content: '请选择楼宇',
+          },
+        }],
+        tipBar: liveTipBar,
+      };
     }
   }
   return ApiController;

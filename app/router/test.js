@@ -10,4 +10,5 @@ module.exports = app => {
   app.resources('weather', '/weather', 'weather');
   app.resources('foodCard', '/food-card', 'foodCard');
   app.resources('express', '/express', 'express');
+  app.resources('ptSale', '/pt-sale', 'ptSale');
 };

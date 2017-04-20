@@ -4,6 +4,7 @@
   "description": "server for WeHIT",
   "private": true,
   "dependencies": {
+    "bbfy": "^0.1.0",
     "cheerio": "^0.22.0",
     "egg": "^1.0.0-rc.3",
     "egg-development-proxyagent": "^1.0.0",
