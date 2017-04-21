@@ -75,6 +75,13 @@ module.exports = app => {
       return post;
     }
 
+    * getPostFromDbByID(id) {
+      const post = yield this.ctx.model.ptSale.findOne({
+        _id: id,
+      });
+      return post;
+    }
+
     /**
      * @desc 获取清影 PT 交易 HTML
      * @return {string} 页面HTML

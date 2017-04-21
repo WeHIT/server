@@ -564,6 +564,7 @@ module.exports = app => {
       const data = yield this.ctx.service.ptSale.getPostFromDB();
       // return data;
 
+      console.log(data);
       return {
         nextCommand: 'common',
         data: [{
@@ -574,6 +575,7 @@ module.exports = app => {
               return {
                 firstImg: 'http:' + item.firstImg,
                 title: item.subject,
+                targetUrl: `ptsale:${item._id}`,
               };
             }),
           },

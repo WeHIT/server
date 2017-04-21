@@ -3564,6 +3564,10 @@ netmask@~1.0.4:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-1.0.6.tgz#20297e89d86f6f6400f250d9f4f6b4c1945fcd35"
 
+node-bbcode:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/node-bbcode/-/node-bbcode-1.0.0.tgz#1c6fd3bb2db5ca53b3ac45e0663386b7d52fc142"
+
 node-escapist@^0.1.1-f:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/node-escapist/-/node-escapist-0.1.1.tgz#bcd3de9ad3488b8a9f0fbcbbdfd45465fa77b491"
