@@ -25,6 +25,34 @@ function getDateBefore(AddDayCount) {
   return y + '' + m + '' + d;
 }
 
+function getDataFromTimeStamp(timeStamp) {
+  const tsReg = /^[0-9]*$/;
+  // 是时间戳
+  if (typeof timeStamp === 'string' && timeStamp.match(tsReg) !== null) {
+    timeStamp = parseInt(timeStamp);
+  }
+  const date = new Date(timeStamp);
+  const Y = date.getFullYear();
+  const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
+  const D = date.getDate();
+  const h = date.getHours();
+  const m = date.getMinutes();
+  const s = date.getSeconds();
+  return `${Y}-${M}-${D} ${h}:${m}:${s}`;
+}
+
+// 统统变成时间戳
+function toTimeStamp(timeStamp) {
+  const tsReg = /^[0-9]*$/;
+  // 是时间戳
+  if (typeof timeStamp === 'string' && timeStamp.match(tsReg) !== null) {
+    return parseInt(timeStamp);
+  }
+  return new Date(timeStamp).getTime();
+}
+
 exports.getRelativeUrl = getRelativeUrl;
 exports.randomFirstImgSrc = randomFirstImgSrc;
 exports.getDateBefore = getDateBefore;
+exports.getDataFromTimeStamp = getDataFromTimeStamp;
+exports.toTimeStamp = toTimeStamp;
