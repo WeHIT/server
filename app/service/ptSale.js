@@ -29,7 +29,7 @@ module.exports = app => {
       const { pt } = this.app.config;
 
       const pureSaleInfoList = yield this.getPtSalePostList();
-      const imgReg = /\[img].*\[\/img]/;
+      const imgReg = /\[img].*?\[\/img]/;
 
       for (let i = 0; i < pureSaleInfoList.length; i++) {
         const comment = yield this.getComment(pureSaleInfoList[i].topicid);

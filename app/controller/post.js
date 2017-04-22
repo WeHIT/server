@@ -26,7 +26,6 @@ module.exports = app => {
               topicid: data.topicid,
               subject: data.subject,
               comment: data.comment.map(item => {
-                //item.body = '<img src="https://i.redd.it/1l01wjsv22my.jpg" width="400" height="400" />'；
                 item.body = bbcode.render(item.body, {});
                 return item;
               }),
