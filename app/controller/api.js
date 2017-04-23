@@ -174,22 +174,54 @@ module.exports = app => {
      */
     * handleTodayNewsCommon(id) {
       try {
-        const findUser = yield this.ctx.model.user.find({
-          id,
-        });
-        console.log(findUser[0]);
-
-        const news = yield this.service.today.getRecentNewFromDb(findUser[0].college);
-        return {
-          nextCommand: 'common',
-          data: [{
-            type: 'news',
-            data: {
-              position: 'left',
-              content: news,
-            },
-          }],
-        };
+        let news;
+        if (id) {
+          const findUser = yield this.ctx.model.user.find({
+            id,
+          });
+          news = yield this.service.today.getRecentNewFromDb(findUser[0].college);
+          return {
+            nextCommand: 'common',
+            data: [{
+              type: 'news',
+              data: {
+                position: 'left',
+                content: news.map(item => {
+                  return {
+                    title: item.title,
+                    firstImg: item.firstImg,
+                    targetUrl: `news:${item._id}`,
+                  };
+                }),
+              },
+            }],
+          };
+        } else {
+          news = yield this.service.today.getRecentNewFromDb('all');
+          return {
+            nextCommand: 'common',
+            data: [{
+              type: 'normalDialog',
+              data: {
+                position: 'left',
+                content: '系统检测到你没有登录，随机为你推荐最新新闻',
+              },
+            }, {
+              type: 'news',
+              data: {
+                position: 'left',
+                content: news.map(item => {
+                  return {
+                    title: item.title,
+                    firstImg: item.firstImg,
+                    targetUrl: `news:${item._id}`,
+                  };
+                }),
+              },
+            }],
+          };
+        }
+        
       } catch (e) {
         return ERROR_TIP;
       }

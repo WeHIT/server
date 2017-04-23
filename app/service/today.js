@@ -12,10 +12,27 @@ module.exports = app => {
 
     // time 时间倒序
     * getRecentNewFromDb(tag, limit = 4) {
-      const findExpress = yield this.ctx.model.todayNews.find({
-        tag,
-      }, null, { sort: { time: -1 } }).limit(limit);
-      return findExpress;
+      let findNews;
+      if (tag === 'all') {
+        findNews = yield this.ctx.model.todayNews.find({}, null, { sort: { time: -1 } }).limit(limit);
+      } else {
+        findNews = yield this.ctx.model.todayNews.find({
+          tag,
+        }, null, { sort: { time: -1 } }).limit(limit);
+      }
+      return findNews;
+    }
+
+    /**
+     * @desc 根据文章 id 获取内容
+     * @param {string} id 文章id
+     * @return {object} return findNews Object
+     */
+    * getPostFromDbByID(id) {
+      const findNew = yield this.ctx.model.todayNews.findOne({
+        _id: id,
+      });
+      return findNew;
     }
 
     /**

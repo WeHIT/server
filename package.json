@@ -15,7 +15,10 @@
     "md5": "^2.2.1",
     "moment": "^2.17.1",
     "node-bbcode": "^1.0.0",
+    "showdown": "^1.6.4",
+    "to-markdown": "^3.0.4",
     "true-html-escape": "^1.0.0",
+    "upndown": "^2.1.0",
     "urlencode": "^1.1.0",
     "zlib": "^1.0.5"
   },

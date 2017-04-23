@@ -4,6 +4,8 @@
 'use strict';
 
 const bbcode = require('node-bbcode');
+const upndown = require('upndown');
+const showdown = require('showdown');
 const util = require('../util');
 
 module.exports = app => {
@@ -49,6 +51,35 @@ module.exports = app => {
                 };
               }),
             },
+          });
+        } else if (type === 'news') {
+          const data = yield this.service.today.getPostFromDbByID(id);
+          console.log(data);
+
+          new Promise((reject, resolve) => {
+            const und = new upndown();
+            und.convert(data.content, (err, markdown) => {
+              if (err) {
+                resolve(err);
+              }
+              reject(markdown);
+            });
+          }).then(markdown => {
+            const converter = new showdown.Converter();
+            this.success({
+              data: {
+                _id: data._id,
+                subject: data.title,
+                comment: [{
+                  body: `<div>${converter.makeHtml(markdown)}</div>`,
+                  username: data.username || '',
+                  postid: '',
+                  avatar: '',
+                  added: util.getDataFromTimeStamp(data.time),
+                  from: 'yes',
+                }],
+              },
+            });
           });
         }
       } else if (command === 'postComment') {
