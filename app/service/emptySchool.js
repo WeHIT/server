@@ -125,6 +125,7 @@ module.exports = app => {
         const live = trDom.eq(row).children().eq(0)[0].children[0].data;
 
         for (let col = 1; col < trDom.eq(row).children().length; col++) {
+          // 红色表示占用，即教室不空
           if (trDom.eq(row).children().eq(col)
               .children()
               .eq(0)
@@ -132,10 +133,21 @@ module.exports = app => {
             result.push({
               xiaoqu,
               house,
-              live,
+              live: live.trim(),
               week,
               weekDay: parseInt((col - 1) / 6) + 1, // 周几
-              time: (col - 1) % 6 + 1, // 时间 12 34 56 78 910 1112 0 1 2 3 4 5
+              time: (col - 1) % 6 + 1, // 时间 12 34 56 78 910 1112 0 1 2 3 4 5,
+              isEmpty: 0,
+            });
+          } else {
+            result.push({
+              xiaoqu,
+              house,
+              live: live.trim(),
+              week,
+              weekDay: parseInt((col - 1) / 6) + 1, // 周几
+              time: (col - 1) % 6 + 1, // 时间 12 34 56 78 910 1112 0 1 2 3 4 5,
+              isEmpty: 1,
             });
           }
         }
@@ -150,7 +162,7 @@ module.exports = app => {
 
 
     /**
-     * @desc 查询到的数组保存到数据库
+     * @desc 查询到的数组保存到数据库 - 占用的数据
      * @param resultArray
      */
     * saveToDb(resultArray) {
@@ -169,6 +181,7 @@ module.exports = app => {
           week: resultArray[i].week,
           weekDay: resultArray[i].weekDay,
           time: resultArray[i].time,
+          isEmpty: resultArray[i].isEmpty,
         }, {
           upsert: true,
           new: true
@@ -176,6 +189,57 @@ module.exports = app => {
       }
     }
 
+    /**
+     * @desc 根据具体位置获得本周空教室情况
+     * @param xiaoqu
+     * @param house
+     * @param live
+     */
+    * getEmptySchollInfoByHouseLive(xiaoqu, house, live) {
+
+      console.log(xiaoqu)
+      console.log(house)
+      console.log(live)
+
+      // 当前周，字符串格式
+      const week = util.getCurrentWeek('2017-2-26') + 1 + '';
+      const result = yield this.ctx.model.emptySchool.find({
+        xiaoqu,
+        house,
+        live: new RegExp(live, "i"), // 模糊查找，DOM 获取到的有时候有空格等问题
+        week,
+        isEmpty: 1,
+      }).sort({
+        "weekDay": 1,
+      });
+
+      return result;
+    }
+
+    /**
+     * @desc 通过校区和时间获取空闲教室 —— 今天
+     * @param xiaoqu
+     * @param time
+     */
+    * getEmptySchoolInfoByXiaoquTimeToday(xiaoqu, time) {
+      // 当前周，字符串格式
+      const week = util.getCurrentWeek('2017-2-26') + 1 + '';
+      const weekDay = new Date().getDay() === 0 ? 7 + '' : new Date().getDay() + '';
+
+      // 为防止查询到的地域太多，只展示常用的几个楼宇
+      const result = yield this.ctx.model.emptySchool.find({
+        xiaoqu,
+        house: xiaoqu === '一校区' ? new RegExp('正心楼|诚意楼|致知楼', "i") : new RegExp('主楼|东配楼|西配楼', "i"),
+        week,
+        time,
+        weekDay
+      }).sort({
+        "house": 1,
+        "live": 1,
+      });
+
+      return result;
+    }
     /**
      * @importent 该接口已经废弃
      * @desc 获取特定校区特定楼宇特定教室的信息

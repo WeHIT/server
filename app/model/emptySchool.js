@@ -2,7 +2,7 @@
 
 module.exports = mongoose => {
   /**
-   * @desc 只存占用了的
+   * @desc
    */
   const emptySchooldSchema = new mongoose.Schema({
     xiaoqu: { type: String }, // 校区
@@ -11,6 +11,7 @@ module.exports = mongoose => {
     week: { type: String }, // 第几周
     weekDay: { type: String }, // 星期几
     time: { type: String }, // 时间 12 34 56 78 910 1112
+    isEmpty: { type: Number }, // 0 代表不空 1 代表空
   });
   return mongoose.model('emptySchool', emptySchooldSchema);
 };
