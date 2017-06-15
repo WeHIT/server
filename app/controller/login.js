@@ -27,6 +27,10 @@ module.exports = app => {
         this.success({
           text: '登录成功',
           token: app.jwt.sign({ id }, app.config.jwt.secret),
+          info: JSON.stringify({
+            id: id,
+            college: findUser[0].college
+          })
         });
       }
     }
