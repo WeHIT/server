@@ -101,7 +101,7 @@ module.exports = app => {
     }
 
     /**
-     * @desc 获取用户信息
+     * @desc 爬虫获取用户信息
      * @param {string} cookies cookies
      * @return {object} 用户信息
      */
@@ -135,7 +135,7 @@ module.exports = app => {
     }
 
     /**
-     * @desc 获取今日消费数据
+     * @desc 爬虫获取今日消费数据
      * @param {string} cookies cookies
      * @param {string} accountId 银行卡后 5 位
      * @return {array} 消费数据
@@ -197,7 +197,7 @@ module.exports = app => {
     }
 
     /**
-     * desc 获取点击 	历史流水查询 -> 确定 的链接
+     * @desc 获取点击 	历史流水查询 -> 确定 的链接
      * @param {string} cookies cookies
      * @return {string} 相对链接
      */

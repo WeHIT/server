@@ -46,12 +46,12 @@ module.exports = app => {
 
     /**
      * @desc 获取特定楼宇 特定页 的信息
-     * @param xiaoqu
-     * @param house
-     * @param week
-     * @param pageNo
-     * @param pageSize
-     * @param pageCount
+     * @param xiaoqu 校区
+     * @param house 楼宇
+     * @param week 周数
+     * @param pageNo 当前页数
+     * @param pageSize 总共页数(上个函数获得)
+     * @param pageCount 总页数(上个函数获得)
      */
     * curlEmptySchoolByPage(xiaoqu = '一校区', house = '正心楼', week, pageNo, pageSize, pageCount) {
       const { emptySchool } = this.app.config;
@@ -98,11 +98,11 @@ module.exports = app => {
     }
 
     /**
-     * @desc 爬虫爬到的数组处理为数组
-     * @param curlData
-     * @param xiaoqu
-     * @param house
-     * @param week
+     * @desc 分析 DOM，将爬虫爬到的数组处理为数组
+     * @param curlData 爬虫抓取到的数据
+     * @param xiaoqu 校区
+     * @param house 楼宇
+     * @param week 周数
      */
     * handleCurlDataToArray(curlData, xiaoqu, house, week) {
       const data = curlData.data;
@@ -191,9 +191,9 @@ module.exports = app => {
 
     /**
      * @desc 根据具体位置获得本周空教室情况
-     * @param xiaoqu
-     * @param house
-     * @param live
+     * @param xiaoqu 校区
+     * @param house 楼宇
+     * @param live 特定教室
      */
     * getEmptySchollInfoByHouseLive(xiaoqu, house, live) {
 
@@ -218,8 +218,8 @@ module.exports = app => {
 
     /**
      * @desc 通过校区和时间获取空闲教室 —— 今天
-     * @param xiaoqu
-     * @param time
+     * @param xiaoqu 校区
+     * @param time 时间
      */
     * getEmptySchoolInfoByXiaoquTimeToday(xiaoqu, time) {
       // 当前周，字符串格式

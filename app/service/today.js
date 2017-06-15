@@ -11,6 +11,12 @@ module.exports = app => {
   class TodayService extends app.Service {
 
     // time 时间倒序
+    /**
+     * @desc 按照时间倒序从数组库获取相关 tag 的新闻
+     * @param tag tag名
+     * @param limit 获取条数
+     * @returns {*}
+     */
     * getRecentNewFromDb(tag, limit = 4) {
       let findNews;
       if (tag === 'all') {
@@ -55,8 +61,8 @@ module.exports = app => {
 
 
     /**
-     * 根据 command 爬取相关分类文章
-     * @param command
+     * @desc 根据约定的 command 爬取相关分类文章
+     * @param {object} command 约定的 command
      */
     * getRencentNews(command) {
       switch (command.type) {
@@ -96,8 +102,8 @@ module.exports = app => {
     }
 
     /**
-     * 获取 today 上特定 URL 的内容，第一张图片
-     * @param url
+     * @desc 获取 today 上特定 URL 的内容，第一张图片
+     * @param {string } url
      * @returns {{firstImg: string, content: jQuery}}
      */
     * getSpecialNews(url) {
@@ -129,6 +135,14 @@ module.exports = app => {
         content: escaper.unescape($('#text').html()),
         time,
       };
+    }
+
+    /**
+     * @desc 保存相应信息到数据库
+     * @param {array} info
+     */
+    *saveToDb(info) {
+
     }
 
   }

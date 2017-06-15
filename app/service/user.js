@@ -16,6 +16,23 @@ module.exports = app => {
       }
       return null;
     }
+
+    /**
+     * @desc 增加用户
+     * @param info {Object} 用户信息
+     */
+    * saveUser(info) {
+      return;
+    }
+
+    /**
+     * @desc 更新用户信息
+     * @params id {string} 用户id
+     * @param info {object} 用户新信息
+     */
+    * updateUser(id, info) {
+      return;
+    }
   }
   return UserService;
 };

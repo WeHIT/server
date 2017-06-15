@@ -9,7 +9,7 @@ module.exports = app => {
     }
 
     /**
-     * 地理位置编码
+     * 从高德地图获取地理位置编码
      * @param {string} lat 纬度
      * @param {string} lon 经度
      */
@@ -40,7 +40,7 @@ module.exports = app => {
 
     /**
      * @desc 天气预报预测
-     * @param {*} adcode 
+     * @param {number} adcode
      */
     * getTodayWeatherForecasts(adcode = 230103) {
       console.log(adcode)
@@ -59,8 +59,8 @@ module.exports = app => {
     }
 
     /**
-     * @desc 今日详情
-     * @param {*} adcode 
+     * @desc 获取今日天气今日详情
+     * @param {number} adcode
      */
     * getTodayWeather(adcode = 230103) {
       console.log(adcode)

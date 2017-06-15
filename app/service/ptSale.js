@@ -75,6 +75,11 @@ module.exports = app => {
       return post;
     }
 
+    /**
+     * @desc 获取特定二手信息的内容
+     * @param id
+     * @returns {*}
+     */
     * getPostFromDbByID(id) {
       const post = yield this.ctx.model.ptSale.findOne({
         _id: id,

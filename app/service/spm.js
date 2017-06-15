@@ -7,8 +7,8 @@ module.exports = app => {
   class spmService extends app.Service {
     /**
      * @desc 保存spm和设备信息到数据库
-     * @param spm
-     * @param device
+     * @param spm spm
+     * @param device 设备信息
      * @returns {boolean}
      */
     * saveToDb(spm, device) {
